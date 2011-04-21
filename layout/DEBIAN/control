@@ -7,3 +7,8 @@ Description: Continuously clean up locationd's history data
 Name: untrackerd
 Depends: firmware (>= 4.0)
 Author: Ryan Petrich <rpetrich+untrackerd@gmail.com>
+Maintainer: BigBoss <bigboss@thebigboss.org>
+Homepage: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=untrackerdData
+Depiction: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=untrackerdData
+Sponsor: thebigboss.org <http://thebigboss.org>
+dev: rpetrich
