@@ -1,16 +1,31 @@
 #include <stdio.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <sqlite3.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 // untrackerd
 // Ryan Petrich
 // Continuously clean up locationd's history data
 
+#define DATABASE_PATH "/var/root/Library/Caches/locationd/consolidated.db"
+
+static time_t last_time;
+
 static inline bool clear_data()
 {
+	struct stat file_stat;
+	// Determine if file was modified
+	if (stat(DATABASE_PATH, &file_stat) == 0) {
+		time_t old_time = last_time;
+		last_time = file_stat.st_mtime;
+		if (last_time == old_time) {
+			return true;
+		}
+	}
 	sqlite3 *database = NULL;
 	// Open Database
-	int result = sqlite3_open("/var/root/Library/Caches/locationd/consolidated.db", &database);
+	int result = sqlite3_open(DATABASE_PATH, &database);
 	if (result == SQLITE_OK) {
 		sqlite3_stmt *statement = NULL;
 		CFAbsoluteTime time = CFAbsoluteTimeGetCurrent() - (60.0 * 30.0);
