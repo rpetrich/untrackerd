@@ -52,6 +52,18 @@ static inline bool clear_data()
 				}
 				sqlite3_finalize(statement);
 			}
+			// Apply vacuuming if necessary
+			if (result == SQLITE_DONE) {
+				result = sqlite3_prepare_v2(database, "PRAGMA auto_vacuum;", -1, &statement, NULL);
+				int auto_vacuum = 0;
+				while ((result = sqlite3_step(statement)) == SQLITE_ROW) {
+					auto_vacuum = sqlite3_column_int(statement, 0);
+				}
+				sqlite3_finalize(statement);
+				if (auto_vacuum == 0) {
+					sqlite3_exec(database, "PRAGMA auto_vacuum = 1; VACUUM;", NULL, NULL, NULL);
+				}
+			}
 		}
 		// Close Database
 		sqlite3_close(database);
