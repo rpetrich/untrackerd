@@ -1,0 +1,7 @@
+#!/bin/sh
+chown root:wheel /usr/bin/untrackerd
+chmod 755 /usr/bin/untrackerd
+chown root:wheel /Library/LaunchDaemons/com.rpetrich.untrackerd.plist
+chmod 644 /Library/LaunchDaemons/com.rpetrich.untrackerd.plist
+/bin/launchctl load -w /Library/LaunchDaemons/com.rpetrich.untrackerd.plist
+exit 0
