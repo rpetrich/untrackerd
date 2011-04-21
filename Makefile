@@ -1,7 +1,7 @@
 TOOL_NAME = untrackerd
 untrackerd_FILES = untrackerd.c
 untrackerd_FRAMEWORKS = CoreFoundation
-untrackerd_LDFLAGS = -lsqlite3 -Wl,-stack_size,1000
+untrackerd_LDFLAGS = -lsqlite3 -Wl,-stack_size,8000
 
 ADDITIONAL_CFLAGS = -std=c99
 
