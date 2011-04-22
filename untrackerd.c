@@ -29,6 +29,18 @@ static inline bool clear_data()
 	if (result == SQLITE_OK) {
 		sqlite3_stmt *statement = NULL;
 		CFAbsoluteTime time = CFAbsoluteTimeGetCurrent() - (60.0 * 30.0);
+		// Ensure secure delete is set
+		result = sqlite3_prepare_v2(database, "PRAGMA secure_delete;", -1, &statement, NULL);
+		int secure_delete = 0;
+		while ((result = sqlite3_step(statement)) == SQLITE_ROW) {
+			secure_delete = sqlite3_column_int(statement, 0);
+		}
+		sqlite3_finalize(statement);
+		if (secure_delete == 0) {
+			sqlite3_exec(database, "PRAGMA secure_delete = 1;", NULL, NULL, NULL);
+		}
+		if (result != SQLITE_DONE)
+			goto close;
 		// Clear Cell data
 		result = sqlite3_prepare_v2(database, "DELETE FROM CellLocation WHERE Timestamp < ?;", -1, &statement, NULL);
 		if (result == SQLITE_OK) {
@@ -66,6 +78,7 @@ static inline bool clear_data()
 			}
 		}
 		// Close Database
+close:
 		sqlite3_close(database);
 	}
 	return (result == SQLITE_OK) || (result == SQLITE_DONE);
