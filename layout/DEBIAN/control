@@ -2,7 +2,7 @@ Package: com.rpetrich.untrackerd
 Priority: optional
 Section: System
 Architecture: iphoneos-arm
-Version: 0.2
+Version: 0.3
 Description: Continuously clean up locationd's history data
 Name: untrackerd
 Depends: firmware (>= 4.0)
