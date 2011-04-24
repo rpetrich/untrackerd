@@ -67,6 +67,19 @@ static inline bool clear_data()
 		sqlite3_finalize(statement);
 		if (!sqlite_is_success(result))
 			goto close;
+		// Clear Local Cell data
+		result = sqlite3_prepare_v2(database, "DELETE FROM CellLocationLocal WHERE Timestamp < ?;", -1, &statement, NULL);
+		if (!sqlite_is_success(result))
+			goto close;
+		result = sqlite3_bind_double(statement, 1, time);
+		if (sqlite_is_success(result)) {
+			do {
+				result = sqlite3_step(statement);
+			} while (result == SQLITE_ROW);
+		}
+		sqlite3_finalize(statement);
+		if (!sqlite_is_success(result))
+			goto close;
 		// Clear WiFi Data
 		result = sqlite3_prepare_v2(database, "DELETE FROM WifiLocation WHERE Timestamp < ?;", -1, &statement, NULL);
 		if (!sqlite_is_success(result))
