@@ -42,8 +42,9 @@ static inline bool clear_data()
 		CFAbsoluteTime time = CFAbsoluteTimeGetCurrent() - (60.0 * 30.0);
 		// Ensure secure delete is set
 		result = sqlite3_prepare_v2(database, "PRAGMA secure_delete;", -1, &statement, NULL);
-		if (!sqlite_is_success(result))
+		if (!sqlite_is_success(result)) {
 			goto close;
+		}
 		int secure_delete = 0;
 		while ((result = sqlite3_step(statement)) == SQLITE_ROW) {
 			secure_delete = sqlite3_column_int(statement, 0);
@@ -52,12 +53,14 @@ static inline bool clear_data()
 		if (secure_delete == 0) {
 			sqlite3_exec(database, "PRAGMA secure_delete = 1;", NULL, NULL, NULL);
 		}
-		if (!sqlite_is_success(result))
+		if (!sqlite_is_success(result)) {
 			goto close;
+		}
 		// Clear Cell data
 		result = sqlite3_prepare_v2(database, "DELETE FROM CellLocation WHERE Timestamp < ?;", -1, &statement, NULL);
-		if (!sqlite_is_success(result))
+		if (!sqlite_is_success(result)) {
 			goto close;
+		}
 		result = sqlite3_bind_double(statement, 1, time);
 		if (sqlite_is_success(result)) {
 			do {
@@ -65,12 +68,14 @@ static inline bool clear_data()
 			} while (result == SQLITE_ROW);
 		}
 		sqlite3_finalize(statement);
-		if (!sqlite_is_success(result))
+		if (!sqlite_is_success(result)) {
 			goto close;
+		}
 		// Clear Local Cell data
 		result = sqlite3_prepare_v2(database, "DELETE FROM CellLocationLocal WHERE Timestamp < ?;", -1, &statement, NULL);
-		if (!sqlite_is_success(result))
+		if (!sqlite_is_success(result)) {
 			goto close;
+		}
 		result = sqlite3_bind_double(statement, 1, time);
 		if (sqlite_is_success(result)) {
 			do {
@@ -78,12 +83,14 @@ static inline bool clear_data()
 			} while (result == SQLITE_ROW);
 		}
 		sqlite3_finalize(statement);
-		if (!sqlite_is_success(result))
+		if (!sqlite_is_success(result)) {
 			goto close;
+		}
 		// Clear WiFi Data
 		result = sqlite3_prepare_v2(database, "DELETE FROM WifiLocation WHERE Timestamp < ?;", -1, &statement, NULL);
-		if (!sqlite_is_success(result))
+		if (!sqlite_is_success(result)) {
 			goto close;
+		}
 		result = sqlite3_bind_double(statement, 1, time);
 		if (sqlite_is_success(result)) {
 			do {
@@ -91,12 +98,14 @@ static inline bool clear_data()
 			} while (result == SQLITE_ROW);
 		}
 		sqlite3_finalize(statement);
-		if (!sqlite_is_success(result))
+		if (!sqlite_is_success(result)) {
 			goto close;
+		}
 		// Clear CDMA data if necessary
 		result = sqlite3_prepare_v2(database, "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='CdmaCellLocation';", -1, &statement, NULL);
-		if (!sqlite_is_success(result))
+		if (!sqlite_is_success(result)) {
 			goto close;
+		}
 		int has_cdma = 0;
 		while ((result = sqlite3_step(statement)) == SQLITE_ROW) {
 			has_cdma = sqlite3_column_int(statement, 0);
@@ -105,8 +114,9 @@ static inline bool clear_data()
 		if (has_cdma != 0) {
 			// Clear CDMA Cell data
 			result = sqlite3_prepare_v2(database, "DELETE FROM CdmaCellLocation WHERE Timestamp < ?;", -1, &statement, NULL);
-			if (!sqlite_is_success(result))
+			if (!sqlite_is_success(result)) {
 				goto close;
+			}
 			result = sqlite3_bind_double(statement, 1, time);
 			if (sqlite_is_success(result)) {
 				do {
@@ -114,12 +124,14 @@ static inline bool clear_data()
 				} while (result == SQLITE_ROW);
 			}
 			sqlite3_finalize(statement);
-			if (!sqlite_is_success(result))
+			if (!sqlite_is_success(result)) {
 				goto close;
+			}
 			// Clear Local CDMA Cell data
 			result = sqlite3_prepare_v2(database, "DELETE FROM CdmaCellLocationLocal WHERE Timestamp < ?;", -1, &statement, NULL);
-			if (!sqlite_is_success(result))
+			if (!sqlite_is_success(result)) {
 				goto close;
+			}
 			result = sqlite3_bind_double(statement, 1, time);
 			if (sqlite_is_success(result)) {
 				do {
@@ -127,13 +139,15 @@ static inline bool clear_data()
 				} while (result == SQLITE_ROW);
 			}
 			sqlite3_finalize(statement);
-			if (!sqlite_is_success(result))
+			if (!sqlite_is_success(result)) {
 				goto close;
+			}
 		}
 		// Apply vacuuming if necessary
 		result = sqlite3_prepare_v2(database, "PRAGMA auto_vacuum;", -1, &statement, NULL);
-		if (!sqlite_is_success(result))
+		if (!sqlite_is_success(result)) {
 			goto close;
+		}
 		int auto_vacuum = 0;
 		while ((result = sqlite3_step(statement)) == SQLITE_ROW) {
 			auto_vacuum = sqlite3_column_int(statement, 0);
